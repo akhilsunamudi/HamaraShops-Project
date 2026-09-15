@@ -1,202 +1,563 @@
-# HamaraShops.ai — Enterprise Microservices Platform
+# HamaraShops.ai
 
-[![Java 21](https://img.shields.io/badge/Java-21-orange.svg?style=flat-square&logo=openjdk)](https://adoptium.net/)
-[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.1.0-brightgreen.svg?style=flat-square&logo=springboot)](https://spring.io/projects/spring-boot)
-[![Spring Cloud](https://img.shields.io/badge/Spring%20Cloud-2025.1.2-blue.svg?style=flat-square&logo=spring)](https://spring.io/projects/spring-cloud)
-[![React](https://img.shields.io/badge/React-19.0.0-61DAFB.svg?style=flat-square&logo=react)](https://react.dev/)
-[![Vite](https://img.shields.io/badge/Vite-5.4.11-646CFF.svg?style=flat-square&logo=vite)](https://vitejs.dev/)
-[![Google Cloud Run](https://img.shields.io/badge/GCP-Cloud%20Run-4285F4.svg?style=flat-square&logo=googlecloud)](https://cloud.google.com/run)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](LICENSE)
+> Enterprise Full-Stack Business Platform built with Java 21, Spring Boot Microservices and React.
 
-**HamaraShops.ai** is an enterprise-grade full-stack platform featuring an event-driven Java 21 Spring Boot microservices backend and a modern React 19 single-page application (SPA) frontend. Built for high performance, fault isolation, and cloud-native scalability, the architecture decouples domain capabilities into autonomous services orchestrated via a Spring Cloud WebFlux API Gateway and deployed serverlessly on Google Cloud Run.
+HamaraShops.ai is a modern full-stack web application developed using a microservices-based backend architecture and a React frontend.
 
----
+The backend is developed using Java 21, Spring Boot and Spring Cloud, while the frontend is developed using React and Vite.
 
-## 🌐 Live Production Endpoints
+The project uses an API Gateway for centralized request routing and Netflix Eureka for service discovery in the local environment.
 
-| Service Name | Technology / Role | Live Production Cloud Run URL | Status |
-| :--- | :--- | :--- | :---: |
-| **Frontend SPA** | React 19 + Vite + Nginx | [frontend-27562154208.asia-south1.run.app](https://frontend-27562154208.asia-south1.run.app) | `PASS (200 OK)` |
-| **API Gateway** | Spring Cloud Gateway WebFlux | `https://api-gateway-27562154208.asia-south1.run.app` | `PASS (200 OK)` |
-| **Content Service** | Spring Boot REST API | `https://content-service-y3nfalli7a-el.a.run.app` | `PASS (200 OK)` |
-| **Business Service**| Spring Boot REST API | `https://business-service-27562154208.asia-south1.run.app` | `PASS (200 OK)` |
-| **Contact Service** | Spring Boot REST API | `https://contact-service-27562154208.asia-south1.run.app` | `PASS (200 OK)` |
+## 👨‍💻 Developer
 
----
+**Akhil Sunamudi**
 
-## 🏗 System Architecture
+## 🚀 Project Overview
 
-```
-+-----------------------------------------------------------------------------------+
-|                                 CLIENT LAYER                                      |
-|                                                                                   |
-|      +--------------------------------------------------------------------+       |
-|      |                        React 19 SPA Frontend                       |       |
-|      |         URL: https://frontend-27562154208.asia-south1.run.app      |       |
-|      +----------------------------------+---------------------------------+       |
-+-----------------------------------------|-----------------------------------------+
-                                          | HTTPS / REST JSON
-                                          v
-+-----------------------------------------------------------------------------------+
-|                              API GATEWAY LAYER                                    |
-|                                                                                   |
-|      +--------------------------------------------------------------------+       |
-|      |                    Spring Cloud API Gateway                        |       |
-|      |        URL: https://api-gateway-27562154208.asia-south1.run.app   |       |
-|      |       CORS Validation | Path Predicate Matching | StripPrefix      |       |
-|      +-----+----------------------------+---------------------------+-----+       |
-+------------|----------------------------|---------------------------|-------------+
-             |                            |                           |
-             | /api/v1/products/**        | /api/v1/industries/**     | /api/v1/contact/**
-             | /api/v1/solutions/**       | /api/v1/careers/**        |
-             v                            v                           v
-+------------------------+   +------------------------+   +------------------------+
-|    Content Service     |   |    Business Service    |   |    Contact Service     |
-|  (Catalog & Solutions) |   |  (Industries & Jobs)   |   | (Inquiries & Leads)    |
-| Cloud Run Microservice |   | Cloud Run Microservice |   | Cloud Run Microservice |
-+------------------------+   +------------------------+   +------------------------+
-```
+HamaraShops.ai contains different modules for managing business-related content and user interactions.
 
----
+### Major Functionalities
 
-## ✨ Key Architectural Highlights
+- Products and AI solutions
+- Business and industry information
+- Career opportunities
+- Customer inquiries
+- REST API communication
+- Centralized API Gateway
+- Microservices-based backend
+- Service discovery using Eureka
+- React-based frontend
+- Docker support
+- Cloud deployment support
 
-- **Single Public Ingress**: All client traffic passes through the Spring Cloud API Gateway, masking internal microservice topographies.
-- **Dual-Profile Runtime Adaptability**:
-  - `SPRING_PROFILES_ACTIVE=local`: Integrates with Netflix Eureka Server for service registration and dynamic discovery (`lb://SERVICE-NAME`).
-  - `SPRING_PROFILES_ACTIVE=cloud`: Disables Eureka overhead (`eureka.client.enabled=false`) and leverages Google Cloud Run native load balancers with direct HTTPS URI forwarding.
-- **Reactive CORS WebFilter**: Global cross-origin configuration managing preflight `OPTIONS` requests, custom allowed origins, and header policies.
-- **Modern React 19 Client**: High-speed frontend built with Vite 5.4, Tailwind CSS, Lucide icons, Framer Motion animations, and GPU-accelerated WebGL hero canvas shaders.
-- **Centralized Axios Interceptors**: Unified HTTP client with automatic response unwrapping and global error telemetry handling.
-- **Multi-Stage Docker Packaging**: Lightweight container builds using Eclipse Temurin 21 JRE Alpine (~160MB) for Spring Boot and Nginx Alpine (~25MB) for the React SPA.
+## 🏗️ System Architecture
 
----
-
-## 📁 Repository Directory Structure
-
-```
-HamaraShops-Ai/
-├── api-gateway/            # Spring Cloud WebFlux API Gateway (Port 8080)
-├── business-service/       # Industries & Careers Microservice (Port 8082)
-├── contact-service/        # Lead Inquiries & Tracking Microservice (Port 8083)
-├── content-service/        # AI Products, Solutions & Services Microservice (Port 8081)
-├── eureka-cloud-server/    # Netflix Eureka Discovery Server (Port 8761 - Local Profile)
-└── frontend/               # React 19 + Vite Single Page Application (Port 5173 / Port 80)
+```text
+                         ┌─────────────────────────┐
+                         │      React Frontend     │
+                         │       React + Vite      │
+                         └────────────┬────────────┘
+                                      │
+                                      │ HTTPS / REST API
+                                      ▼
+                         ┌─────────────────────────┐
+                         │       API Gateway       │
+                         │  Spring Cloud Gateway   │
+                         │         Port 8080       │
+                         └────────────┬────────────┘
+                                      │
+                  ┌───────────────────┼───────────────────┐
+                  │                   │                   │
+                  ▼                   ▼                   ▼
+        ┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐
+        │ Content Service │ │ Business Service│ │ Contact Service │
+        │    Port 8081    │ │    Port 8082    │ │    Port 8083    │
+        └─────────────────┘ └─────────────────┘ └─────────────────┘
+                                      │
+                                      ▼
+                         ┌─────────────────────────┐
+                         │     Eureka Server       │
+                         │    Service Discovery    │
+                         │       Port 8761         │
+                         └─────────────────────────┘
 ```
 
----
+## 📦 Microservices
 
-## 🛠 Technology Stack Details
+### 1. API Gateway
 
-### Backend Stack
-- **Java**: JDK 21 (Eclipse Temurin)
-- **Framework**: Spring Boot `4.1.0`
-- **Cloud Infrastructure**: Spring Cloud `2025.1.2` (Gateway WebFlux, Eureka Client, LoadBalancer, Actuator)
-- **Build Tool**: Apache Maven `3.9.9`
+**Technology:** Spring Cloud Gateway WebFlux  
+**Port:** `8080`
 
-### Frontend Stack
-- **Library**: React `19.0.0`
-- **Build Tool**: Vite `5.4.11`
-- **Routing**: React Router DOM `7.1.5`
-- **HTTP Client**: Axios `1.7.9`
-- **Styling & UI**: Tailwind CSS `3.4.17`, Framer Motion `12.4.3`, Lucide Icons `0.475.0`
-- **Production Web Server**: Nginx Alpine
+The API Gateway acts as the single entry point between the frontend and backend services.
 
----
+**Responsibilities:**
 
-## 🚦 API Endpoints Reference
+- Route frontend requests
+- Forward requests to the correct microservice
+- Handle CORS configuration
+- Manage API paths
+- Provide a centralized backend entry point
 
-| Microservice | HTTP Method | Gateway Endpoint Path | Description |
-| :--- | :---: | :--- | :--- |
-| **Content Service** | `GET` | `/api/v1/products` | Returns list of AI Product Suite offerings |
-| **Content Service** | `GET` | `/api/v1/products/{slug}` | Returns detailed product profile by slug |
-| **Content Service** | `GET` | `/api/v1/solutions` | Returns industry solution blueprints |
-| **Content Service** | `GET` | `/api/v1/services` | Returns enterprise consulting & integration services |
-| **Content Service** | `GET` | `/api/v1/case-studies` | Returns customer success stories & benchmarks |
-| **Business Service**| `GET` | `/api/v1/industries` | Returns active industry vertical solutions |
-| **Business Service**| `GET` | `/api/v1/careers` | Returns open engineering & AI job opportunities |
-| **Contact Service** | `POST`| `/api/v1/contact/inquire` | Accepts inquiry form submission & returns tracking receipt ID |
+### 2. Content Service
 
----
+**Technology:** Spring Boot  
+**Port:** `8081`
 
-## 💻 Local Development Quickstart
+The Content Service manages application content related to products, solutions, services and case studies.
+
+**Main APIs:**
+
+```text
+GET /api/v1/products
+GET /api/v1/products/{slug}
+GET /api/v1/solutions
+GET /api/v1/services
+GET /api/v1/case-studies
+```
+
+**Responsibilities:**
+
+- Product information
+- Product details
+- Solutions
+- Enterprise services
+- Case studies
+
+### 3. Business Service
+
+**Technology:** Spring Boot  
+**Port:** `8082`
+
+The Business Service handles business-related information such as industries and career opportunities.
+
+**Main APIs:**
+
+```text
+GET /api/v1/industries
+GET /api/v1/careers
+```
+
+**Responsibilities:**
+
+- Industry information
+- Career information
+- Business-related content
+
+### 4. Contact Service
+
+**Technology:** Spring Boot  
+**Port:** `8083`
+
+The Contact Service manages customer inquiries submitted through the application.
+
+**Main API:**
+
+```text
+POST /api/v1/contact/inquire
+```
+
+The service receives the inquiry information and returns a tracking or receipt ID.
+
+### 5. Eureka Discovery Server
+
+**Technology:** Spring Cloud Netflix Eureka  
+**Port:** `8761`
+
+Eureka is used for service discovery during local development.
+
+Each microservice can register itself with Eureka, allowing services to discover other services.
+
+**Eureka Dashboard:**
+
+```text
+http://localhost:8761
+```
+
+## 💻 Frontend
+
+The frontend is developed as a modern Single Page Application (SPA) using React.
+
+### Frontend Technologies
+
+- React 19
+- Vite
+- React Router
+- Axios
+- Tailwind CSS
+- Framer Motion
+- Lucide Icons
+- Nginx for production
+
+The React frontend communicates with the backend services through REST APIs using the API Gateway.
+
+## 🛠️ Technology Stack
+
+### Backend
+
+| Technology | Version / Usage |
+|------------|-----------------|
+| Java | 21 |
+| Spring Boot | 4.1.0 |
+| Spring Cloud | 2025.1.2 |
+| Spring Cloud Gateway | WebFlux |
+| Netflix Eureka | Service Discovery |
+| Maven | 3.9+ |
+| REST APIs | Backend Communication |
+
+### Frontend
+
+| Technology | Version / Usage |
+|------------|-----------------|
+| React | 19.0.0 |
+| Vite | 5.4.11 |
+| React Router DOM | 7.1.5 |
+| Axios | 1.7.9 |
+| Tailwind CSS | 3.4.17 |
+| Framer Motion | 12.4.3 |
+| Lucide Icons | 0.475.0 |
+
+### Deployment
+
+- Docker
+- Nginx
+- Google Cloud Run
+- Google Cloud Build
+
+## 📁 Project Structure
+
+```text
+HamaraShops-AI/
+│
+├── api-gateway/
+│   └── Spring Cloud API Gateway
+│
+├── business-service/
+│   └── Industries & Careers Microservice
+│
+├── contact-service/
+│   └── Customer Inquiry Microservice
+│
+├── content-service/
+│   └── Products, Solutions & Services Microservice
+│
+├── eureka-cloud-server/
+│   └── Eureka Service Discovery Server
+│
+├── frontend/
+│   └── React + Vite Application
+│
+├── .gitignore
+│
+└── README.md
+```
+
+## 🔄 Application Flow
+
+```text
+                         USER
+                           │
+                           ▼
+                  ┌─────────────────┐
+                  │ React Frontend  │
+                  └────────┬────────┘
+                           │
+                           │ REST API Request
+                           ▼
+                  ┌─────────────────┐
+                  │   API Gateway   │
+                  │     :8080       │
+                  └────────┬────────┘
+                           │
+            ┌──────────────┼──────────────┐
+            │              │              │
+            ▼              ▼              ▼
+       Content         Business        Contact
+       Service         Service         Service
+        :8081           :8082           :8083
+```
+
+### Example Product Request
+
+```text
+React Frontend
+      ↓
+API Gateway
+      ↓
+Content Service
+      ↓
+Product Data
+      ↓
+API Gateway
+      ↓
+React Frontend
+      ↓
+User
+```
+
+## 🌐 API Reference
+
+| Microservice | Method | Endpoint | Description |
+|--------------|--------|----------|-------------|
+| Content Service | GET | `/api/v1/products` | Get product list |
+| Content Service | GET | `/api/v1/products/{slug}` | Get product details |
+| Content Service | GET | `/api/v1/solutions` | Get solutions |
+| Content Service | GET | `/api/v1/services` | Get services |
+| Content Service | GET | `/api/v1/case-studies` | Get case studies |
+| Business Service | GET | `/api/v1/industries` | Get industries |
+| Business Service | GET | `/api/v1/careers` | Get career opportunities |
+| Contact Service | POST | `/api/v1/contact/inquire` | Submit customer inquiry |
+
+## ⚙️ Local Development Setup
 
 ### Prerequisites
-- **JDK 21** or later installed
-- **Node.js 20+** and **npm 10+** installed
-- **Apache Maven 3.9+** installed
+
+Before running the project, install:
+
+- JDK 21 or later
+- Node.js 20 or later
+- npm 10 or later
+- Maven 3.9 or later
+- Git
 
 ### 1. Clone the Repository
+
 ```bash
-git clone https://github.com/YOUR_GITHUB_USERNAME/HamaraShops-Ai.git
-cd HamaraShops-Ai
+git clone https://github.com/akhilsunamudi/HamaraShops-Project.git
+cd HamaraShops-Project
 ```
 
-### 2. Start Eureka Discovery Server (Optional for Local Profile)
+### 2. Start Eureka Server
+
+Open a terminal:
+
 ```bash
 cd eureka-cloud-server
 mvn spring-boot:run
 ```
-*Eureka Dashboard runs at `http://localhost:8761`*
 
-### 3. Start Backend Microservices
-Open separate terminal tabs for each service:
-```bash
-# Content Service (Port 8081)
-cd content-service && mvn spring-boot:run
+Eureka Dashboard:
 
-# Business Service (Port 8082)
-cd business-service && mvn spring-boot:run
-
-# Contact Service (Port 8083)
-cd contact-service && mvn spring-boot:run
-
-# API Gateway (Port 8080)
-cd api-gateway && mvn spring-boot:run
+```text
+http://localhost:8761
 ```
 
-### 4. Start React Frontend
+### 3. Start Content Service
+
+Open another terminal:
+
+```bash
+cd content-service
+mvn spring-boot:run
+```
+
+Runs on:
+
+```text
+http://localhost:8081
+```
+
+### 4. Start Business Service
+
+Open another terminal:
+
+```bash
+cd business-service
+mvn spring-boot:run
+```
+
+Runs on:
+
+```text
+http://localhost:8082
+```
+
+### 5. Start Contact Service
+
+Open another terminal:
+
+```bash
+cd contact-service
+mvn spring-boot:run
+```
+
+Runs on:
+
+```text
+http://localhost:8083
+```
+
+### 6. Start API Gateway
+
+Open another terminal:
+
+```bash
+cd api-gateway
+mvn spring-boot:run
+```
+
+Runs on:
+
+```text
+http://localhost:8080
+```
+
+### 7. Start Frontend
+
+Open another terminal:
+
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
-*Frontend local server runs at `http://localhost:5173`*
 
----
+Frontend:
 
-## 🐳 Docker & Cloud Run Deployment
+```text
+http://localhost:5173
+```
 
-### Building Docker Images Locally
-Each microservice and the frontend contains a production-ready `Dockerfile`:
+## 🐳 Docker Support
+
+The project includes Docker support for packaging services into containers.
+
+### Build API Gateway
+
 ```bash
-# Build API Gateway Container Image
 docker build -t hamarashops/api-gateway:latest ./api-gateway
+```
 
-# Build Frontend Container Image
+### Build Frontend
+
+```bash
 docker build -t hamarashops/frontend:latest ./frontend
 ```
 
-### Deploying to Google Cloud Run via gcloud CLI
-```bash
-# 1. Authenticate with GCP
-gcloud auth configure-docker asia-south1-docker.pkg.dev
+## ☁️ Cloud Deployment
 
-# 2. Remote Build using Google Cloud Build
-gcloud builds submit --tag asia-south1-docker.pkg.dev/hamarashops-ai/hamarashops-repo/api-gateway:v1.0.0 ./api-gateway
+The application is designed to support container-based cloud deployment.
 
-# 3. Deploy API Gateway to Cloud Run
-gcloud run deploy api-gateway \
-  --image asia-south1-docker.pkg.dev/hamarashops-ai/hamarashops-repo/api-gateway:v1.0.0 \
-  --platform managed \
-  --region asia-south1 \
-  --allow-unauthenticated \
-  --set-env-vars SPRING_PROFILES_ACTIVE=cloud
+```text
+                    Source Code
+                         │
+                         ▼
+                    Docker Build
+                         │
+                         ▼
+                 Google Cloud Build
+                         │
+                         ▼
+                  Container Image
+                         │
+                         ▼
+                  Google Cloud Run
+                         │
+        ┌────────────────┼────────────────┐
+        │                │                │
+        ▼                ▼                ▼
+    Frontend        API Gateway       Microservices
 ```
+
+The backend services can be deployed independently as separate Cloud Run services.
+
+## 🔀 Application Profiles
+
+### Local Profile
+
+```text
+SPRING_PROFILES_ACTIVE=local
+```
+
+The local profile is designed to work with Eureka service discovery.
+
+### Cloud Profile
+
+```text
+SPRING_PROFILES_ACTIVE=cloud
+```
+
+The cloud profile is designed for cloud deployment where services can communicate using their deployed service endpoints.
+
+## ✨ Key Features
+
+- Microservices-based architecture
+- Centralized API Gateway
+- Eureka service discovery
+- REST API communication
+- React Single Page Application
+- Responsive frontend
+- Axios-based API communication
+- Docker support
+- Cloud deployment support
+- Separate local and cloud profiles
+
+## 📊 Why Microservices?
+
+Instead of creating one large backend application, HamaraShops.ai separates the application into multiple independent services.
+
+```text
+                 HamaraShops.ai
+                       │
+        ┌──────────────┼──────────────┐
+        │              │              │
+        ▼              ▼              ▼
+ Content Service  Business Service  Contact Service
+        │              │              │
+        ▼              ▼              ▼
+ Products          Industries       Inquiries
+ Solutions         Careers          Contact Forms
+ Services
+```
+
+Each service has its own responsibility, making the application easier to maintain, test, update and deploy.
+
+## 🧪 API Testing
+
+The REST APIs can be tested using Postman or directly through the frontend application.
+
+Example:
+
+```text
+GET http://localhost:8080/api/v1/products
+```
+
+The request is received by the API Gateway and forwarded to the Content Service.
+
+Contact API:
+
+```text
+POST http://localhost:8080/api/v1/contact/inquire
+```
+
+## 🔐 CORS & API Communication
+
+The project includes centralized API communication and CORS configuration.
+
+```text
+React Frontend
+      │
+      │ HTTP / HTTPS
+      ▼
+API Gateway
+      │
+      ▼
+Backend Microservice
+```
+
+## 📌 Project Status
+
+HamaraShops.ai has been developed as a full-stack microservices application with:
+
+- React frontend
+- Spring Boot backend
+- Spring Cloud
+- API Gateway
+- Eureka service discovery
+- REST APIs
+- Docker support
+- Cloud deployment support
+
+## 👨‍💻 Developer
+
+**Akhil Sunamudi**
+
+Full Stack Java Developer
+
+### Technologies
+
+Java • Spring Boot • Spring Cloud • Microservices • REST APIs • React • Vite • Axios • Docker • Google Cloud • Git • GitHub
+
+## 📄 License
+
+This project is distributed under the MIT License.
+
+See the `LICENSE` file for more information.
 
 ---
 
-## 📜 License & Acknowledgments
+# ⭐ HamaraShops.ai
 
-Distributed under the **MIT License**. See `LICENSE` for details.
+A full-stack microservices platform built using modern Java, Spring Boot, Spring Cloud and React technologies.
 
+**Developed by Akhil Sunamudi**
